@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notification Form</title>
+   <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <form id="messageForm">
+      <select id="category">
+        <option value="SPORTS">Sports</option>
+        <option value="FINANCE">Finance</option>
+        <option value="MOVIES">Movies</option>
+      </select>
+      <textarea id="content" required></textarea>
+      <br>
+      <button type="submit">Send</button></button>
+    </form>
+
+    <table id="logTable">
+      <thead>
+        <tr><th>User</th><th>Channel</th><th>Category</th><th>Status</th><th>Time</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <script src="script.js"></script>
+</body>
+
+</html>
