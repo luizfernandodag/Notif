@@ -49,14 +49,13 @@ POST	/api/messages	Send a message to users	JSON { "category": "SPORTS", "content
 GET	/api/logs	List all notification logs	JSON list of NotificationLog objects
 
 ## Example payload for sending
-```json
-Copiar
-Editar
+
+
 {
   "category": "SPORTS",
   "content": "World Cup final is tonight!"
 }
-How to run locally
+## How to run locally
 Clone the repository
 
 Configure the database in application.properties (example for H2)
@@ -65,7 +64,7 @@ Run the application with ./mvnw spring-boot:run or using your IDE or mvn spring-
 
 Access the simple frontend to send messages or use curl/Postman to test the endpoints
 
-Tests
+## Tests
 The project includes unit tests for services and DTO validation. To run tests:
 
 
@@ -81,7 +80,7 @@ Error handling: Fault tolerance in sending with complete logs for auditing
 
 Clean Architecture: Well-defined folders and layers for future scalability
 
-Contact
+## Contact
 Developed by Luiz Fernando de Andrade Gadêlha.
 
 If you want, I can help format this nicely or add more sections!
