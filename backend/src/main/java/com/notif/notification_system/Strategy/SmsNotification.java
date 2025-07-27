@@ -6,7 +6,7 @@ import com.notif.notification_system.Entity.User;
 import com.notif.notification_system.Enum.Category;
 import com.notif.notification_system.Enum.ChannelType;
 
-@Component("smsNotification")
+@Component("SMS")
 public class SmsNotification extends AbstractNotification {
     @Override
     public void send(User user, String message, Category category) {

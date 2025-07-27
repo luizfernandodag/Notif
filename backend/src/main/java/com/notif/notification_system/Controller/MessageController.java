@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.notif.notification_system.DTO.MessageDto;
-import com.notif.notification_system.Entity.NotificationLog;
+import com.notif.notification_system.DTO.NotificationLogDto;
 import com.notif.notification_system.Service.NotificationService;
 
 import jakarta.validation.Valid;
@@ -47,11 +47,19 @@ public class MessageController {
 
     }
         
-    @GetMapping("/logs") // <- Aqui está a correção!
-    public List<NotificationLog> getAllLogs() {
 
-        //return ResponseEntity.ok(notificationService.getAllLogs());
-        return this.notificationService.findAll();
-    }
+    @GetMapping("/logs")
+public List<NotificationLogDto> getAllLogs() {
+    return notificationService.findAll().stream()
+        .map(log -> new NotificationLogDto(
+            log.getUserName(),
+           log.getChannel() != null ? log.getChannel().name() : "UNKNOWN",
+           log.getCategory() != null ? log.getCategory().name() : "UNKNOWN",
+            log.isSuccess() ? "SENT" : "FAILED",  // converte boolean para texto
+            log.getTimestamp().toString(),
+            log.getMessage()
+        ))
+        .collect(Collectors.toList());
+}
 
 }

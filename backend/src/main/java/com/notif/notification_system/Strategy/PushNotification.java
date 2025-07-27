@@ -6,7 +6,7 @@ import com.notif.notification_system.Entity.User;
 import com.notif.notification_system.Enum.Category;
 import com.notif.notification_system.Enum.ChannelType;
 
-@Component("pushNotification")
+@Component("PUSH")
 public class PushNotification extends AbstractNotification {
 
     @Override

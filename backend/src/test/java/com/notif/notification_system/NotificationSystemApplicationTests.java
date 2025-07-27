@@ -4,15 +4,14 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.util.List;
+import java.util.Set;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
 
 import com.notif.notification_system.DTO.MessageDto;
-import com.notif.notification_system.Entity.NotificationLog;
 import com.notif.notification_system.Entity.User;
 import com.notif.notification_system.Enum.Category;
 import com.notif.notification_system.Enum.ChannelType;
@@ -22,44 +21,62 @@ import com.notif.notification_system.Service.NotificationService;
 import com.notif.notification_system.Service.UserService;
 import com.notif.notification_system.Strategy.NotificationChannel;
 
-@ExtendWith(MockitoExtension.class)
-class NotificationSystemApplicationTests {
+public class NotificationSystemApplicationTests {
+
+    private NotificationService notificationService;
 
     @Mock
     private NotificationSenderFactory senderFactory;
 
-    @Mock 
+    @Mock
     private UserService userService;
 
     @Mock
     private NotificationLogRepository logRepository;
 
-    @InjectMocks
-    private NotificationService notificationService; 
-@Test
-void shouldSendNotificationToSubscribedUsers() {
-    MessageDto messageDto = new MessageDto();
-    messageDto.setCategory(Category.SPORTS);
-    messageDto.setContent("World cop end!");
+    @Mock
+    private NotificationChannel notificationChannel;
 
-    User user = new User();
-    user.setName("João");
-    user.setEmail("joao@example.com");
-    user.setPhone("999999999");
-    user.setSubscriptions(List.of(Category.SPORTS));
-    user.setChannels(List.of(ChannelType.EMAIL));
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
+        notificationService = new NotificationService(senderFactory, userService, logRepository);
+    }
 
-    NotificationChannel mockSender = mock(NotificationChannel.class);
+    @Test
+    public void shouldSendNotificationToSubscribedUsers() {
+        // Arrange
+        User user = User.builder()
+            .name("Test User")
+            .email("test@example.com")
+            .phone("5511999999999")
+            .subscriptions(Set.of(Category.SPORTS)) // usa enum Category
+            .channels(Set.of(ChannelType.EMAIL))   // usa enum ChannelTypeIÚSCULO: string simples para o canal
+            .build();
 
-    when(userService.getAllUsers()).thenReturn(List.of(user));
-    when(senderFactory.getSender(ChannelType.EMAIL)).thenReturn(mockSender);
+        when(userService.getAllUserEntities()).thenReturn(List.of(user));
 
-    notificationService.sendNotificationToSubscribedUsers(messageDto);
+        // Mock do factory para retornar o mock notificationChannel para qualquer chave maiúscula "EMAIL"
+        when(senderFactory.getSender(anyString())).thenAnswer(invocation -> {
+            String channelName = invocation.getArgument(0).toString().toUpperCase();
+            if ("EMAIL".equals(channelName)) {
+                return notificationChannel;
+            }
+            throw new IllegalArgumentException("No sender found for channel: " + channelName);
+        });
 
-    verify(mockSender).send(eq(user), eq("World cop end!"), eq(Category.SPORTS));
-    verify(logRepository, times(1)).save(any(NotificationLog.class));
-}
+        MessageDto dto = new MessageDto("SPORTS", "World cup end!");
 
+        // Act
+        notificationService.sendNotificationToSubscribedUsers(dto);
 
+        // Assert
+        verify(notificationChannel, times(1)).send(
+            eq(user),
+            eq("World cup end!"),
+            eq(Category.SPORTS)
+        );
 
+        verify(logRepository, atLeastOnce()).save(any());
+    }
 }

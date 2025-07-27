@@ -1,59 +1,80 @@
 package com.notif.notification_system.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.notif.notification_system.DTO.UserDto;
 import com.notif.notification_system.Entity.User;
 import com.notif.notification_system.Enum.Category;
 import com.notif.notification_system.Enum.ChannelType;
+import com.notif.notification_system.Repository.UserRepository;
 
-import jakarta.annotation.PostConstruct;
 @Service
 public class UserService {
 
-        private final List<User> users = new ArrayList<>();
+    @Autowired
+    private UserRepository userRepository;
 
-    @PostConstruct
-    public void init() {
-        users.add(User.builder()
-                .id(1L)
-                .name("Maria Silva")
-                .email("maria@email.com")
-                .phone("+5511999999999")
-                .subscriptions(Arrays.asList(Category.SPORTS, Category.MOVIES))
-                .channels(Arrays.asList(ChannelType.EMAIL, ChannelType.SMS))
-                .build());
-
-        users.add(User.builder()
-                .id(2L)
-                .name("João Souza")
-                .email("joao@email.com")
-                .phone("+5511988888888")
-                .subscriptions(List.of(Category.FINANCE))
-                .channels(Arrays.asList(ChannelType.PUSH, ChannelType.EMAIL))
-                .build());
-
-        users.add(User.builder()
-                .id(3L)
-                .name("Ana Oliveira")
-                .email("ana@email.com")
-                .phone("+5511977777777")
-                .subscriptions(Arrays.asList(Category.MOVIES, Category.FINANCE))
-                .channels(List.of(ChannelType.PUSH))
-                .build());
+    // Retorna as entidades diretamente
+    public List<User> getAllUserEntities() {
+        return userRepository.findAll();
     }
 
-    public List<User> getAllUsers() {
-        return users;
-    }
+    // Retorna DTOs para exibição
+   public List<UserDto> getAllUsers() {
+    return userRepository.findAll().stream()
+        .map(user -> new UserDto(
+            user.getName(),
+            user.getEmail(),
+            user.getPhone(),
+            user.getSubscriptions().stream()
+                .map(Enum::name)
+                .collect(Collectors.toSet()),
+            user.getChannels().stream()
+                .map(Enum::name)
+                .collect(Collectors.toSet())
+        ))
+        .collect(Collectors.toList());
+}
 
+    // Filtra usuários inscritos em uma categoria
     public List<User> getUsersSubscribedTo(Category category) {
-        return users.stream()
-                .filter(user -> user.getSubscriptions().contains(category))
-                .toList();
+        return userRepository.findBySubscriptionsContains(category);
     }
+
+    public UserDto toDto(User user) {
+    return new UserDto(
+        user.getName(),
+        user.getEmail(),
+        user.getPhone(),
+        user.getSubscriptions().stream().map(Enum::name).collect(Collectors.toSet()),
+        user.getChannels().stream().map(Enum::name).collect(Collectors.toSet())
+    );
+    }
+
+    // Adiciona usuário a partir do DTO
+   public User addUser(UserDto dto) {
+    Set<Category> categories = dto.getSubscriptions().stream()
+        .map(Category::valueOf)  // converte String para enum
+        .collect(Collectors.toSet());
+
+    Set<ChannelType> channels = dto.getChannels().stream()
+        .map(ChannelType::valueOf) // converte String para enum
+        .collect(Collectors.toSet());
+
+    User user = User.builder()
+        .name(dto.getName())
+        .email(dto.getEmail())
+        .phone(dto.getPhone())
+        .subscriptions(categories)
+        .channels(channels)
+        .build();
+
+    return userRepository.save(user);
+}
 
 }

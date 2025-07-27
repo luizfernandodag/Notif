@@ -38,7 +38,7 @@ public class NotificationLog {
     private ChannelType channel;
 
     private LocalDateTime timestamp;
-    private boolean sucess;
+    private boolean success;
     public LocalDateTime getTimestamp() {
         // TODO Auto-generated method stub
         return this.timestamp;

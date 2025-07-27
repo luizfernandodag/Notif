@@ -4,8 +4,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -18,8 +20,9 @@ import com.notif.notification_system.Enum.Category;
 import com.notif.notification_system.Service.NotificationService;
 
 
-
+@Import(TestSecurityConfig.class)
 @WebMvcTest(MessageController.class)
+@AutoConfigureMockMvc
 public class MessageControllerTest {
 
     @Autowired
@@ -35,7 +38,7 @@ public class MessageControllerTest {
     @Test
     public void shouldReturn200WhenMessageIsValid() throws Exception {
         MessageDto dto = new MessageDto();
-        dto.setCategory(Category.SPORTS);
+        dto.setCategory(Category.SPORTS.name());
         dto.setContent("Match today at 18h");
 
         mockMvc.perform(post("/api/messages")

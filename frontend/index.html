@@ -3,30 +3,81 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Notification Form</title>
-   <link rel="stylesheet" href="style.css">
+  <title>Notification System</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
+
+    <h1>Send Notification</h1>
     <form id="messageForm">
-      <select id="category">
+      <label for="category">Category:</label>
+      <select id="category" required>
         <option value="SPORTS">Sports</option>
         <option value="FINANCE">Finance</option>
         <option value="MOVIES">Movies</option>
       </select>
-      <textarea id="content" required></textarea>
       <br>
-      <button type="submit">Send</button></button>
+      <textarea id="content" placeholder="Digite sua mensagem..." required></textarea>
+      <br>
+      <button type="submit">Send</button>
     </form>
 
+    <h2>Logs</h2>
     <table id="logTable">
       <thead>
-        <tr><th>User</th><th>Channel</th><th>Category</th><th>Status</th><th>Time</th></tr>
+         <tr>
+              <th>User</th>
+              <th>Channel</th>
+              <th>Category</th>
+              <th>Status</th>
+              <th>Hour</th>
+              <th>Message</th>
+
+          </tr>
       </thead>
       <tbody></tbody>
     </table>
+
+    <hr>
+
+    <h1>Register User</h1>
+    <form id="userForm">
+      <input type="text" id="name" placeholder="Name" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="text" id="phone" placeholder="Phone" required />
+
+      <p>Signature:</p>
+      <label><input type="checkbox" value="SPORTS" class="subscription"> Sports</label>
+      <label><input type="checkbox" value="FINANCE" class="subscription"> Finance</label>
+      <label><input type="checkbox" value="MOVIES" class="subscription"> Movies</label>
+
+      <p>Channels:</p>
+      <label><input type="checkbox" value="EMAIL" class="channel"> Email</label>
+      <label><input type="checkbox" value="SMS" class="channel"> SMS</label>
+      <label><input type="checkbox" value="PUSH" class="channel"> Push</label>
+
+      <br>
+      <button type="submit">New User</button>
+    </form>
+
+    <h2>Users</h2>
+    <table border="1" id="userTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Signature</th>
+          <th>Channels</th>
+          
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
   </div>
+
   <script src="script.js"></script>
 </body>
-
 </html>
